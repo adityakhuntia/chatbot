@@ -14,11 +14,11 @@ app = FastAPI()
 SUPABASE_URL = "https://nizvcdssajfpjtncbojx.supabase.co"
 SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5penZjZHNzYWpmcGp0bmNib2p4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDI2MTU0ODksImV4cCI6MjA1ODE5MTQ4OX0.5b2Yzfzzzz-C8S6iqhG3SinKszlgjdd4NUxogWIxCLc"
 COHERE_API_KEY = "8ueWFEgswEV04DUHCsnpIiFqYDeD35e4BPs8sepl"
-SUPABASE_PASSWORD = "Supabase@Ishanya@Team2"
+SUPABASE_PASSWORD = "SupaBase@Ishanya@Team_2"
 
 # Initialize database connection
 db = SQLDatabase.from_uri(
-    f"postgresql://postgres:{quote(str(SUPABASE_PASSWORD), safe='')}@db.{SUPABASE_URL.split('//')[-1]}:5273/postgres"
+    f"postgresql://postgres:{quote(str(SUPABASE_PASSWORD), safe='')}@db.{SUPABASE_URL.split('//')[-1]}:5432/postgres"
 )
 
 db_chain = SQLDatabaseChain.from_llm(
