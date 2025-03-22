@@ -18,7 +18,7 @@ SUPABASE_PASSWORD = "SupaBase@Ishanya@Team_2"
 
 # Initialize database connection
 db = SQLDatabase.from_uri(
-    f"postgresql://postgres:{quote(str(SUPABASE_PASSWORD), safe='')}@db.{SUPABASE_URL.split('//')[-1]}:5432/postgres"
+    f"postgresql://postgres:{quote(str(SUPABASE_PASSWORD), safe='')}@db.{SUPABASE_URL.split('//')[-1]}:6543/postgres"
 )
 
 db_chain = SQLDatabaseChain.from_llm(
