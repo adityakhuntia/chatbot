@@ -7,8 +7,19 @@ from langchain_experimental.sql import SQLDatabaseChain
 from langchain_community.utilities import SQLDatabase
 from urllib.parse import quote
 import os
+from fastapi.middleware.cors import CORSMiddleware 
+
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Replace "*" with frontend domain(s) for better security
+    allow_credentials=True,
+    allow_methods=["*"],  # Allow all HTTP methods
+    allow_headers=["*"],  # Allow all headers
+)
+
 
 # Environment variables
 SUPABASE_URL = "https://nizvcdssajfpjtncbojx.supabase.co"
