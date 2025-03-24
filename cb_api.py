@@ -74,7 +74,7 @@ def chatbot(request: QueryRequest):
         The user has one of the following roles: (Acess Level | Access Name | Access Description)
         1. **Admin** – Can view all data without restrictions.
         2. **HR** – Can view everything related to all Teachers and Employees but cannot access Student-related data.
-        3. **Teacher** – Can view all details related to Students who are assigned to the same program but cannot access unrelated Student, Employee, or Teacher data.
+        3. **Teacher** – Can view all details related to Students but cannot access unrelated  Employee, or Teacher data.
         
         Ensure that queries enforce these access rules by filtering data appropriately. If the user requests unauthorized information, respond with an error message instead of generating a query.
 
