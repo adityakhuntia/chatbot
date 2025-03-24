@@ -17,9 +17,14 @@ COHERE_API_KEY = "8ueWFEgswEV04DUHCsnpIiFqYDeD35e4BPs8sepl"
 SUPABASE_PASSWORD = "SupaBase@Ishanya@Team_2"
 
 # Initialize database connection
+#db = SQLDatabase.from_uri(
+#    f"postgresql://postgres:{quote(str(SUPABASE_PASSWORD), safe='')}@db.{SUPABASE_URL.split('//')[-1]}:6543/postgres"
+#)
+
 db = SQLDatabase.from_uri(
-    f"postgresql://postgres:{quote(str(SUPABASE_PASSWORD), safe='')}@db.{SUPABASE_URL.split('//')[-1]}:6543/postgres"
+    f"postgresql://postgres.nizvcdssajfpjtncbojx:{quote(str(SUPABASE_PASSWORD), safe='')}@aws-0-ap-south-1.pooler.supabase.com:6543/postgres"
 )
+
 
 db_chain = SQLDatabaseChain.from_llm(
     llm=ChatCohere(cohere_api_key=COHERE_API_KEY),
