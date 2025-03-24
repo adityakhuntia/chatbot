@@ -180,7 +180,7 @@ def chatbot(request: QueryRequest):
         #### 6. programs
         Stores information about programs.
         
-        - `id` (int, PRIMARY KEY)
+        
         - `program_id` (text, UNIQUE)
         - `name` (text)
         - `num_of_student` (int)
