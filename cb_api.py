@@ -63,7 +63,7 @@ class QueryRequest(BaseModel):
 def chatbot(request: QueryRequest):
     try:
         user_query = request.user_query + (
-        db_schema_prompt = """You are an SQL Agent interacting with a database. Ensure all queries respect foreign key constraints, data types, and relationships.
+        """You are an SQL Agent interacting with a database. Ensure all queries respect foreign key constraints, data types, and relationships.
         
         ### Database Schema:
         
