@@ -68,7 +68,7 @@ def chatbot(request: QueryRequest):
         
         Ensure all queries respect foreign key constraints, data types, and relationships.
         Ensure all SQL queries adhere to these constraints given below and relationships while fetching, inserting, updating, or deleting records..
-        Ensure SQL queries use parameterized placeholders (:teacher_employee_id) instead of raw values.
+        
         You must also adhere to role-based access permissions.
         
         The user has one of the following roles: (Acess Level | Access Name | Access Description)
