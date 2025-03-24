@@ -63,48 +63,165 @@ class QueryRequest(BaseModel):
 def chatbot(request: QueryRequest):
     try:
         user_query = request.user_query + (
-        "The following is the schema of the Students table: "
-        "STUDENT_id: Unique identifier for the student. "
-        "first_name: First name of the student. "
-        "last_name: Last name of the student. "
-        "photo: Profile picture or avatar of the student. "
-        "gender: Gender of the student. "
-        "dob: Date of birth of the student. "
-        "primary_diagnosis: Primary medical or educational diagnosis. "
-        "comorbidity: Any additional medical conditions. "
-        "udid: Unique Disability ID (if applicable). "
-        "enrollment_year: Year the student was enrolled. "
-        "status: Current enrollment status (active, graduated, etc.). "
-        "student_email: Email address of the student. "
-        "program_id: Primary program the student is enrolled in. --> Foreign Key to Programme Table" 
-        "program_2_id: Secondary program (if any). --> Foreign Key to Programme Table"
-        "number_of_sessions: Total sessions attended or scheduled. "
-        "timings: Preferred or scheduled session timings. "
-        "days_of_week: Days of the week the student attends sessions. "
-        "educator_id: Primary educator assigned to the student. "
-        "secondary_educator_id: Secondary educator (if any). "
-        "session_type: Type of session (e.g., individual, group, online). "
-        "blood_group: Student's blood group. "
-        "allergies: Known allergies, if any. "
-        "contact_number: Primary contact number. "
-        "alt_contact_number: Alternate contact number. "
-        "address: Residential address of the student. "
-        "transport: Transportation details or requirements. "
-        "strengths: Notable strengths of the student. "
-        "weakness: Areas where the student may need additional support. "
-        "comments: Additional notes or remarks. "
-        "created_at: Timestamp when the record was created. "
-        "center_id: Identifier for the center the student is associated with."
+        db_schema_prompt = """You are an SQL Agent interacting with a database. Ensure all queries respect foreign key constraints, data types, and relationships.
         
+        ### Database Schema:
         
-        "The following is the schema of the programs table: "
+        #### 1. students
+        Stores information about students.
         
-        "id: Unique identifier for the programme, "
-        "name: Name of the programme, "
-        "num_of_student: Number of students enrolled in the programme, "
-        "num_of_educator: Number of educators assigned to the programme, "
-        "center_id: Identifier for the center associated with the programme, "
-        "created_at: Timestamp when the programme record was created."
+        - `id` (int, PRIMARY KEY)
+        - `first_name` (text)
+        - `last_name` (text)
+        - `photo` (text)
+        - `gender` (text)
+        - `primary_diagnosis` (text)
+        - `comorbidity` (text)
+        - `student_id` (int, UNIQUE)
+        - `enrollment_year` (int)
+        - `status` (text)
+        - `student_email` (text, UNIQUE)
+        - `program_id` (int, FOREIGN KEY → programs.id)
+        - `program_2_id` (int, FOREIGN KEY → programs.id)
+        - `number_of_sessions` (int)
+        - `timings` (text)
+        - `day_of_week` (text)
+        - `educator_employee_id` (int, FOREIGN KEY → employees.id)
+        - `secondary_educator` (int, FOREIGN KEY → employees.id)
+        - `session_type` (text)
+        - `father_name` (text)
+        - `mother_name` (text)
+        - `blood_group` (text)
+        - `allergies` (text)
+        - `contact_number` (text)
+        - `alt_contact_number` (text)
+        - `parents_email` (text)
+        - `address` (text)
+        - `transport` (text)
+        - `strength` (text)
+        - `weakness` (text)
+        - `comments` (text)
+        - `center_id` (int, FOREIGN KEY → centers.id)
+        
+        #### 2. educators
+        Stores information about educators.
+        
+        - `id` (int, PRIMARY KEY)
+        - `employee_id` (int, FOREIGN KEY → employees.id)
+        - `name` (text)
+        - `photo` (text)
+        - `designation` (text)
+        - `email` (text, UNIQUE)
+        - `phone` (text, UNIQUE)
+        - `date_of_birth` (date)
+        - `date_of_joining` (date)
+        - `work_location` (text)
+        - `created_at` (timestamp)
+        
+        #### 3. employees
+        Stores general employee information.
+        
+        - `id` (int, PRIMARY KEY)
+        - `employee_id` (text, UNIQUE)
+        - `name` (text)
+        - `gender` (text)
+        - `designation` (text)
+        - `department` (text)
+        - `employment_type` (text)
+        - `email` (text, UNIQUE)
+        - `phone` (text, UNIQUE)
+        - `date_of_birth` (date)
+        - `date_of_joining` (date)
+        - `date_of_leaving` (date)
+        - `status` (text)
+        - `work_location` (text)
+        - `emergency_contact` (text)
+        - `blood_group` (text)
+        - `created_at` (timestamp)
+        - `center_id` (int, FOREIGN KEY → centers.id)
+        - `LOR` (text)
+        - `password` (text)
+        
+        #### 4. employee_attendance
+        Stores attendance records for employees.
+        
+        - `employee_id` (int, FOREIGN KEY → employees.id)
+        - `date` (date)
+        - `attendance` (bool)
+        
+        #### 5. student_attendance
+        Stores attendance records for students.
+        
+        - `program_id` (int, FOREIGN KEY → programs.id)
+        - `student_id` (int, FOREIGN KEY → students.id)
+        - `date` (date)
+        - `attendance` (bool)
+        
+        #### 6. programs
+        Stores information about programs.
+        
+        - `id` (int, PRIMARY KEY)
+        - `program_id` (text, UNIQUE)
+        - `name` (text)
+        - `num_of_student` (int)
+        - `num_of_educator` (int)
+        - `center_id` (int, FOREIGN KEY → centers.id)
+        - `created_at` (timestamp)
+        - `start_date` (date)
+        - `end_date` (date)
+        
+        #### 7. centers
+        Stores information about different centers.
+        
+        - `id` (int, PRIMARY KEY)
+        - `center_id` (text, UNIQUE)
+        - `name` (text)
+        - `num_of_student` (int)
+        - `num_of_educator` (int)
+        - `num_of_employees` (int)
+        - `location` (text)
+        - `created_at` (timestamp)
+        
+        #### 8. reports
+        Stores reports generated by educators or employees.
+        
+        - `id` (int, PRIMARY KEY)
+        - `generated_by` (int, FOREIGN KEY → employees.id)
+        - `student_id` (int, FOREIGN KEY → students.id)
+        - `report_type` (json)
+        - `content` (text)
+        - `created_at` (timestamp)
+        
+        #### 9. announcements
+        Stores announcements made by administrators.
+        
+        - `announcement_id` (int, PRIMARY KEY)
+        - `admin_id` (int, FOREIGN KEY → employees.id)
+        - `announcement` (text)
+        - `created_at` (timestamp)
+        - `title` (text)
+        
+        #### 10. goals_tasks
+        Stores tasks assigned to students.
+        
+        - `task_id` (int, PRIMARY KEY)
+        - `student_id` (int, FOREIGN KEY → students.id)
+        - `assigned_by` (int, FOREIGN KEY → employees.id)
+        - `description` (text)
+        - `due_date` (date)
+        - `status` (text)
+        - `created_at` (timestamp)
+        - `feedback` (text)
+        - `program_id` (int, FOREIGN KEY → programs.id)
+        
+        ### Relationships:
+        - Each student belongs to **one or two programs**.
+        - Each educator is also an **employee**.
+        - Attendance records link students and employees to their respective programs.
+        - Announcements are made by **admins** (who are employees).
+        
+        Ensure all SQL queries adhere to these constraints and relationships while fetching, inserting, updating, or deleting records."""
+
         )
         response = agent.invoke(user_query)
         return {"response": response.get('output', "No response")}
