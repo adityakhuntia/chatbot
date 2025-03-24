@@ -89,10 +89,9 @@ def chatbot(request: QueryRequest):
         
         Ensure that queries enforce these access rules by filtering data appropriately. If the user requests unauthorized information, respond with an error message instead of generating a query.
 
+        Furthermore, if you think the query asks for a huge amount of data which can't be shown over chat, reply by saying the data is large in scale, we recommend you head to the tables page to view it. 
+        
         Now, given the following access level : {request.user_access_level}, generate a valid SQL query that respects these permissions and display thhe results
-
-
-
 
         
         
