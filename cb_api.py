@@ -57,6 +57,7 @@ agent = initialize_agent(
 )
 
 class QueryRequest(BaseModel):
+    user_access_level: int
     user_query: str
 
 @app.post("/chatbot")
