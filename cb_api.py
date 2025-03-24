@@ -64,7 +64,24 @@ class QueryRequest(BaseModel):
 def chatbot(request: QueryRequest):
     try:
         user_query = request.user_query + (
-        f"""You are an SQL Agent interacting with a database. Ensure all queries respect foreign key constraints, data types, and relationships.
+        f"""You are an SQL Agent interacting with a database. 
+        
+        Ensure all queries respect foreign key constraints, data types, and relationships.
+        
+        You must also adhere to role-based access permissions.
+        
+        The user has one of the following roles: (Acess Level | Access Name | Access Description)
+        1. **Admin** – Can view all data without restrictions.
+        2. **HR** – Can view everything related to all Teachers and Employees but cannot access Student-related data.
+        3. **Teacher** – Can view all details related to Students who are assigned to the same program but cannot access unrelated Student, Employee, or Teacher data.
+        
+        Ensure that queries enforce these access rules by filtering data appropriately. If the user requests unauthorized information, respond with an error message instead of generating a query.
+
+        Ensure all SQL queries adhere to these constraints and relationships while fetching, inserting, updating, or deleting records..
+        
+        Now, given the following access level : {request.user_access_level}, generate a valid SQL query that respects these permissions and display thhe results
+
+        
         
         ### Database Schema:
         
@@ -221,18 +238,7 @@ def chatbot(request: QueryRequest):
         - Attendance records link students and employees to their respective programs.
         - Announcements are made by **admins** (who are employees).
         
-        Ensure all SQL queries adhere to these constraints and relationships while fetching, inserting, updating, or deleting records.
-
-        You must also adhere to role-based access permissions.
         
-        The user has one of the following roles: (Acess Level | Access Name | Access Description)
-        1. **Admin** – Can view all data without restrictions.
-        2. **HR** – Can view everything related to all Teachers and Employees but cannot access Student-related data.
-        3. **Teacher** – Can view all details related to Students who are assigned to the same program but cannot access unrelated Student, Employee, or Teacher data.
-        
-        Ensure that queries enforce these access rules by filtering data appropriately. If the user requests unauthorized information, respond with an error message instead of generating a query.
-        
-        Now, given the following access level : {request.user_access_level}, generate a valid SQL query that respects these permissions.
     
         """
         )
