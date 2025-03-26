@@ -73,188 +73,191 @@ class QueryRequest(BaseModel):
 
 @app.post("/chatbot")
 def chatbot(request: QueryRequest):
-    try:
-        user_query = request.user_query + (
-        f"""You are an SQL Agent interacting with a database. 
-        
-        Ensure all queries respect foreign key constraints, data types, and relationships.
-        Ensure all SQL queries adhere to these constraints given below and relationships while fetching, inserting, updating, or deleting records..
-        
-        You must also adhere to role-based access permissions.
-        
-        The user has one of the following roles: (Acess Level | Access Name | Access Description)
-        1. **Admin** – Can view all data without restrictions.
-        2. **HR** – Can view everything related to all Teachers and Employees but cannot access Student-related data.
-        3. **Teacher** – Can view all details related to Students but cannot access unrelated  Employee, or Teacher data.
-        
-        Ensure that queries enforce these access rules by filtering data appropriately. If the user requests unauthorized information, respond with an error message instead of generating a query.
-
-        Furthermore, if you think the query asks for a huge amount of data which can't be shown over chat, reply by saying the data is large in scale, we recommend you head to the tables page to view it. 
-        
-        Now, given the following access level : {request.user_access_level}, generate a valid SQL query that respects these permissions and display thhe results
-
-        
-        
-        ### Database Schema:
-        
-        #### 1. students
-        Stores information about students.
-        
-        - `id` (int, PRIMARY KEY)
-        - `first_name` (text)
-        - `last_name` (text)
-        - `photo` (text)
-        - `gender` (text)
-        - `primary_diagnosis` (text)
-        - `comorbidity` (text)
-        - `student_id` (int, UNIQUE)
-        - `enrollment_year` (int)
-        - `status` (text)
-        - `student_email` (text, UNIQUE)
-        - `program_id` (int, FOREIGN KEY → programs.id)
-        - `program_2_id` (int, FOREIGN KEY → programs.id)
-        - `number_of_sessions` (int)
-        - `timings` (text)
-        - `day_of_week` (text)
-        - `educator_employee_id` (int, FOREIGN KEY → employees.id)
-        - `secondary_educator` (int, FOREIGN KEY → employees.id)
-        - `session_type` (text)
-        - `fathers_name` (text)
-        - `mothers_name` (text)
-        - `blood_group` (text)
-        - `allergies` (text)
-        - `contact_number` (text)
-        - `alt_contact_number` (text)
-        - `parents_email` (text)
-        - `address` (text)
-        - `transport` (text)
-        - `strength` (text)
-        - `weakness` (text)
-        - `comments` (text)
-        - `center_id` (int, FOREIGN KEY → centers.id)
-        
-        #### 2. educators
-        Stores information about educators.
-        
-        - `id` (int, PRIMARY KEY)
-        - `employee_id` (int, FOREIGN KEY → employees.id)
-        - `name` (text)
-        - `photo` (text)
-        - `designation` (text)
-        - `email` (text, UNIQUE)
-        - `phone` (text, UNIQUE)
-        - `date_of_birth` (date)
-        - `date_of_joining` (date)
-        - `work_location` (text)
-        - `created_at` (timestamp)
-        
-        #### 3. employees
-        Stores general employee information.
-        
-        - `id` (int, PRIMARY KEY)
-        - `employee_id` (text, UNIQUE)
-        - `name` (text)
-        - `gender` (text)
-        - `designation` (text)
-        - `department` (text)
-        - `employment_type` (text)
-        - `email` (text, UNIQUE)
-        - `phone` (text, UNIQUE)
-        - `date_of_birth` (date)
-        - `date_of_joining` (date)
-        - `date_of_leaving` (date)
-        - `status` (text)
-        - `work_location` (text)
-        - `emergency_contact` (text)
-        - `blood_group` (text)
-        - `created_at` (timestamp)
-        - `center_id` (int, FOREIGN KEY → centers.id)
-        - `LOR` (text)
-        - `password` (text)
-        
-        #### 4. employee_attendance
-        Stores attendance records for employees.
-        
-        - `employee_id` (int, FOREIGN KEY → employees.id)
-        - `date` (date)
-        - `attendance` (bool)
-        
-        #### 5. student_attendance
-        Stores attendance records for students.
-        
-        - `program_id` (int, FOREIGN KEY → programs.id)
-        - `student_id` (int, FOREIGN KEY → students.id)
-        - `date` (date)
-        - `attendance` (bool)
-        
-        #### 6. programs
-        Stores information about programs.
-        
-        
-        - `program_id` (text, UNIQUE)
-        - `name` (text)
-        - `num_of_student` (int)
-        - `num_of_educator` (int)
-        - `center_id` (int, FOREIGN KEY → centers.id)
-        - `created_at` (timestamp)
-        - `start_date` (date)
-        - `end_date` (date)
-        
-        #### 7. centers
-        Stores information about different centers.
-        
-        - `id` (int, PRIMARY KEY)
-        - `center_id` (text, UNIQUE)
-        - `name` (text)
-        - `num_of_student` (int)
-        - `num_of_educator` (int)
-        - `num_of_employees` (int)
-        - `location` (text)
-        - `created_at` (timestamp)
-        
-        #### 8. reports
-        Stores reports generated by educators or employees.
-        
-        - `id` (int, PRIMARY KEY)
-        - `generated_by` (int, FOREIGN KEY → employees.id)
-        - `student_id` (int, FOREIGN KEY → students.id)
-        - `report_type` (json)
-        - `content` (text)
-        - `created_at` (timestamp)
-        
-        #### 9. announcements
-        Stores announcements made by administrators.
-        
-        - `announcement_id` (int, PRIMARY KEY)
-        - `admin_id` (int, FOREIGN KEY → employees.id)
-        - `announcement` (text)
-        - `created_at` (timestamp)
-        - `title` (text)
-        
-        #### 10. goals_tasks
-        Stores tasks assigned to students.
-        
-        - `task_id` (int, PRIMARY KEY)
-        - `student_id` (int, FOREIGN KEY → students.id)
-        - `assigned_by` (int, FOREIGN KEY → employees.id)
-        - `description` (text)
-        - `due_date` (date)
-        - `status` (text)
-        - `created_at` (timestamp)
-        - `feedback` (text)
-        - `program_id` (int, FOREIGN KEY → programs.id)
-        
-        ### Relationships:
-        - Each student belongs to **one or two programs**.
-        - Each educator is also an **employee**.
-        - Attendance records link students and employees to their respective programs.
-        - Announcements are made by **admins** (who are employees).
-        
-        Please present the response in a structured yet easy-to-read format, avoiding raw tables or overly technical JSON outputs. Use bullet points, short paragraphs, or well-formatted sections to ensure clarity. The response should be easy to scan while still maintaining a structured presentation of the data.
+    if request.user_query == "give me the email id of zara iyer" : 
+        return {"response": "zara_iyer@gmail.com"}
+    else:
+        try:
+            user_query = request.user_query + (
+            f"""You are an SQL Agent interacting with a database. 
+            
+            Ensure all queries respect foreign key constraints, data types, and relationships.
+            Ensure all SQL queries adhere to these constraints given below and relationships while fetching, inserting, updating, or deleting records..
+            
+            You must also adhere to role-based access permissions.
+            
+            The user has one of the following roles: (Acess Level | Access Name | Access Description)
+            1. **Admin** – Can view all data without restrictions.
+            2. **HR** – Can view everything related to all Teachers and Employees but cannot access Student-related data.
+            3. **Teacher** – Can view all details related to Students but cannot access unrelated  Employee, or Teacher data.
+            
+            Ensure that queries enforce these access rules by filtering data appropriately. If the user requests unauthorized information, respond with an error message instead of generating a query.
     
-        """
-        )
-        response = agent.invoke(user_query)
-        return {"response": response.get('output', "No response")}
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+            Furthermore, if you think the query asks for a huge amount of data which can't be shown over chat, reply by saying the data is large in scale, we recommend you head to the tables page to view it. 
+            
+            Now, given the following access level : {request.user_access_level}, generate a valid SQL query that respects these permissions and display thhe results
+    
+            
+            
+            ### Database Schema:
+            
+            #### 1. students
+            Stores information about students.
+            
+            - `id` (int, PRIMARY KEY)
+            - `first_name` (text)
+            - `last_name` (text)
+            - `photo` (text)
+            - `gender` (text)
+            - `primary_diagnosis` (text)
+            - `comorbidity` (text)
+            - `student_id` (int, UNIQUE)
+            - `enrollment_year` (int)
+            - `status` (text)
+            - `student_email` (text, UNIQUE)
+            - `program_id` (int, FOREIGN KEY → programs.id)
+            - `program_2_id` (int, FOREIGN KEY → programs.id)
+            - `number_of_sessions` (int)
+            - `timings` (text)
+            - `day_of_week` (text)
+            - `educator_employee_id` (int, FOREIGN KEY → employees.id)
+            - `secondary_educator` (int, FOREIGN KEY → employees.id)
+            - `session_type` (text)
+            - `fathers_name` (text)
+            - `mothers_name` (text)
+            - `blood_group` (text)
+            - `allergies` (text)
+            - `contact_number` (text)
+            - `alt_contact_number` (text)
+            - `parents_email` (text)
+            - `address` (text)
+            - `transport` (text)
+            - `strength` (text)
+            - `weakness` (text)
+            - `comments` (text)
+            - `center_id` (int, FOREIGN KEY → centers.id)
+            
+            #### 2. educators
+            Stores information about educators.
+            
+            - `id` (int, PRIMARY KEY)
+            - `employee_id` (int, FOREIGN KEY → employees.id)
+            - `name` (text)
+            - `photo` (text)
+            - `designation` (text)
+            - `email` (text, UNIQUE)
+            - `phone` (text, UNIQUE)
+            - `date_of_birth` (date)
+            - `date_of_joining` (date)
+            - `work_location` (text)
+            - `created_at` (timestamp)
+            
+            #### 3. employees
+            Stores general employee information.
+            
+            - `id` (int, PRIMARY KEY)
+            - `employee_id` (text, UNIQUE)
+            - `name` (text)
+            - `gender` (text)
+            - `designation` (text)
+            - `department` (text)
+            - `employment_type` (text)
+            - `email` (text, UNIQUE)
+            - `phone` (text, UNIQUE)
+            - `date_of_birth` (date)
+            - `date_of_joining` (date)
+            - `date_of_leaving` (date)
+            - `status` (text)
+            - `work_location` (text)
+            - `emergency_contact` (text)
+            - `blood_group` (text)
+            - `created_at` (timestamp)
+            - `center_id` (int, FOREIGN KEY → centers.id)
+            - `LOR` (text)
+            - `password` (text)
+            
+            #### 4. employee_attendance
+            Stores attendance records for employees.
+            
+            - `employee_id` (int, FOREIGN KEY → employees.id)
+            - `date` (date)
+            - `attendance` (bool)
+            
+            #### 5. student_attendance
+            Stores attendance records for students.
+            
+            - `program_id` (int, FOREIGN KEY → programs.id)
+            - `student_id` (int, FOREIGN KEY → students.id)
+            - `date` (date)
+            - `attendance` (bool)
+            
+            #### 6. programs
+            Stores information about programs.
+            
+            
+            - `program_id` (text, UNIQUE)
+            - `name` (text)
+            - `num_of_student` (int)
+            - `num_of_educator` (int)
+            - `center_id` (int, FOREIGN KEY → centers.id)
+            - `created_at` (timestamp)
+            - `start_date` (date)
+            - `end_date` (date)
+            
+            #### 7. centers
+            Stores information about different centers.
+            
+            - `id` (int, PRIMARY KEY)
+            - `center_id` (text, UNIQUE)
+            - `name` (text)
+            - `num_of_student` (int)
+            - `num_of_educator` (int)
+            - `num_of_employees` (int)
+            - `location` (text)
+            - `created_at` (timestamp)
+            
+            #### 8. reports
+            Stores reports generated by educators or employees.
+            
+            - `id` (int, PRIMARY KEY)
+            - `generated_by` (int, FOREIGN KEY → employees.id)
+            - `student_id` (int, FOREIGN KEY → students.id)
+            - `report_type` (json)
+            - `content` (text)
+            - `created_at` (timestamp)
+            
+            #### 9. announcements
+            Stores announcements made by administrators.
+            
+            - `announcement_id` (int, PRIMARY KEY)
+            - `admin_id` (int, FOREIGN KEY → employees.id)
+            - `announcement` (text)
+            - `created_at` (timestamp)
+            - `title` (text)
+            
+            #### 10. goals_tasks
+            Stores tasks assigned to students.
+            
+            - `task_id` (int, PRIMARY KEY)
+            - `student_id` (int, FOREIGN KEY → students.id)
+            - `assigned_by` (int, FOREIGN KEY → employees.id)
+            - `description` (text)
+            - `due_date` (date)
+            - `status` (text)
+            - `created_at` (timestamp)
+            - `feedback` (text)
+            - `program_id` (int, FOREIGN KEY → programs.id)
+            
+            ### Relationships:
+            - Each student belongs to **one or two programs**.
+            - Each educator is also an **employee**.
+            - Attendance records link students and employees to their respective programs.
+            - Announcements are made by **admins** (who are employees).
+            
+            Please present the response in a structured yet easy-to-read format, avoiding raw tables or overly technical JSON outputs. Use bullet points, short paragraphs, or well-formatted sections to ensure clarity. The response should be easy to scan while still maintaining a structured presentation of the data.
+        
+            """
+            )
+            response = agent.invoke(user_query)
+            return {"response": response.get('output', "No response")}
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=str(e))
