@@ -253,11 +253,11 @@ def chatbot(request: QueryRequest):
             - Attendance records link students and employees to their respective programs.
             - Announcements are made by **admins** (who are employees).
             
-            Please present the response in a structured yet easy-to-read format, avoiding raw tables or overly technical JSON outputs. Use bullet points, short paragraphs, or well-formatted sections to ensure clarity. The response should be easy to scan while still maintaining a structured presentation of the data.
-        
+            Please present the response in a structured yet easy-to-read format, avoiding raw tables or overly technical JSON outputs. Use bullet points, short paragraphs, or well-formatted sections to ensure clarity. 
             """
             )
             response = agent.invoke(user_query)
             return {"response": response.get('output', "No response")}
         except Exception as e:
+            return {"response": "Hi ! I could not fetch the data you asked for, but you can always head over to the tables section & filter to view !"}
             raise HTTPException(status_code=500, detail=str(e))
