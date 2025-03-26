@@ -77,7 +77,7 @@ API_KEY = "AIzaSyACcbknWrMdZUapY8sQii16PclJ2xlPlqA"
 genai.configure(api_key=API_KEY)
 def summarize_text(text):
     model = genai.GenerativeModel("gemini-2.0-pro-exp")
-    response = model.generate_content(f"Summarize this: {text}. Remove all instances of '*' or '|'. Give structured output like a chatbot")
+    response = model.generate_content(f"Summarize this: {text}. Remove all instances of '*' or '|'. Give structured output like a chatbot, preferabbly in a small paragraph or numbered points")
     return response.text if response else "No summary generated."
 
     
