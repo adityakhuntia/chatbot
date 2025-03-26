@@ -71,6 +71,16 @@ class QueryRequest(BaseModel):
     user_access_level: int
     user_query: str
 
+
+
+API_KEY = "AIzaSyACcbknWrMdZUapY8sQii16PclJ2xlPlqA"
+genai.configure(api_key=API_KEY)
+def summarize_text(text):
+    model = genai.GenerativeModel("gemini-2.0-pro-exp")
+    response = model.generate_content(f"Summarize this: {text}. Remove all instances of '*' or '|'. Give structured output like a chatbot")
+    return response.text if response else "No summary generated."
+
+    
 @app.post("/chatbot")
 def chatbot(request: QueryRequest):
     if request.user_query == "give me the email id of zara iyer" : 
@@ -262,7 +272,9 @@ def chatbot(request: QueryRequest):
             """
             )
             response = agent.invoke(user_query)
-            return {"response": response.get('output', "No response")}
+            chatbot_answer = summarize_text(response['output']) if 'output' in response else " "Hi ! I could not fetch the data you asked for, but you can always head over to the tables section & filter to view !"
+            
+            return chatbot_answer
         except Exception as e:
             return {"response": "Hi ! I could not fetch the data you asked for, but you can always head over to the tables section & filter to view !"}
             raise HTTPException(status_code=500, detail=str(e))
