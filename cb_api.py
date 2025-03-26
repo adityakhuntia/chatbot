@@ -52,7 +52,7 @@ db_chain = SQLDatabaseChain.from_llm(
     verbose=True
 )
 
-@lru_cache(maxsize=100)
+
 def query_database(query: str):
     """Function to interact with Supabase using SQL queries."""
     print(f"Executing Query: {query}")
