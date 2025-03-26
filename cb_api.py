@@ -30,7 +30,7 @@ SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJ
 COHERE_API_KEY = "8ueWFEgswEV04DUHCsnpIiFqYDeD35e4BPs8sepl"
 SUPABASE_PASSWORD = "SupaBase@Ishanya@Team_2"
 GEMINI_API_KEY = "AIzaSyACcbknWrMdZUapY8sQii16PclJ2xlPlqA"
-genai.configure(api_key=API_KEY)
+genai.configure(api_key=GEMINI_API_KEY)
 # Initialize database connection
 #db = SQLDatabase.from_uri(
 #    f"postgresql://postgres:{quote(str(SUPABASE_PASSWORD), safe='')}@db.{SUPABASE_URL.split('//')[-1]}:6543/postgres"
