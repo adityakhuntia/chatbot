@@ -8,7 +8,7 @@ from langchain_community.utilities import SQLDatabase
 from urllib.parse import quote
 import os
 from fastapi.middleware.cors import CORSMiddleware 
-
+import google.generativeai as genai
 
 app = FastAPI()
 
