@@ -52,7 +52,12 @@ def query_database(query: str):
     print(f"Executing Query: {query}")
     result = db.run(query)
     print(f"Query Result: {result}")
-    return result if result else [("No data found",)]
+
+    # Check if result is not empty and directly return formatted response
+    if result:
+        return f"Hitesh Mehta is currently **{result[0][0]}**."
+    else:
+        return "No record found for Hitesh Mehta."
 
 tool = Tool(
     name="DatabaseQuery",
@@ -68,8 +73,8 @@ agent = initialize_agent(
     agent=AgentType.STRUCTURED_CHAT_ZERO_SHOT_REACT_DESCRIPTION,
     verbose=True,
     handle_parsing_errors=True,
-    max_iterations=3,
-    return_intermediate_steps=True,
+    max_iterations=5,
+    return_intermediate_steps=False,
 )
 
 class QueryRequest(BaseModel):
