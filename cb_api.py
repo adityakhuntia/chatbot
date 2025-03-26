@@ -78,7 +78,7 @@ def chatbot(request: QueryRequest):
     else:
         try:
             user_query = request.user_query + (
-            f"""You are an SQL Agent interacting with a database. 
+            f"""You are an SQL Agent interacting with a database. Ensure all your response is easy to read. avoid structuring data into tables or using '*' or '|'. 
             
             Ensure all queries respect foreign key constraints, data types, and relationships.
             Ensure all SQL queries adhere to these constraints given below and relationships while fetching, inserting, updating, or deleting records..
