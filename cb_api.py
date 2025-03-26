@@ -52,12 +52,7 @@ def query_database(query: str):
     print(f"Executing Query: {query}")
     result = db.run(query)
     print(f"Query Result: {result}")
-
-    # Check if result is not empty and directly return formatted response
-    if result:
-        return f"Hitesh Mehta is currently **{result[0][0]}**."
-    else:
-        return "No record found for Hitesh Mehta."
+    return result
 
 tool = Tool(
     name="DatabaseQuery",
