@@ -6,3 +6,5 @@ langchain_community
 langchain_experimental
 psycopg2-binary
 pydantic
+google-generativeai
+
