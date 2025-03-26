@@ -9,6 +9,8 @@ from urllib.parse import quote
 import os
 from fastapi.middleware.cors import CORSMiddleware 
 import google.generativeai as genai
+from functools import lru_cache
+
 
 app = FastAPI()
 
@@ -44,12 +46,13 @@ db_chain = SQLDatabaseChain.from_llm(
     verbose=True
 )
 
+@lru_cache(maxsize=100)
 def query_database(query: str):
     """Function to interact with Supabase using SQL queries."""
     print(f"Executing Query: {query}")
     result = db.run(query)
     print(f"Query Result: {result}")
-    return result
+    return result if result else [("No data found",)]
 
 tool = Tool(
     name="DatabaseQuery",
@@ -64,7 +67,9 @@ agent = initialize_agent(
     llm=llm,
     agent=AgentType.STRUCTURED_CHAT_ZERO_SHOT_REACT_DESCRIPTION,
     verbose=True,
-    handle_parsing_errors=True
+    handle_parsing_errors=True,
+    max_iterations=3,
+    return_intermediate_steps=True,
 )
 
 class QueryRequest(BaseModel):
