@@ -46,7 +46,7 @@ llm = ChatGoogleGenerativeAI(model="gemini-2.0-pro-exp", google_api_key=GEMINI_A
 
 
 db_chain = SQLDatabaseChain.from_llm(
-    llm=ChatCohere(cohere_api_key=COHERE_API_KEY),
+    llm=llm
     db=db,
     return_direct=True,
     verbose=True
