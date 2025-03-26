@@ -272,7 +272,7 @@ def chatbot(request: QueryRequest):
             """
             )
             response = agent.invoke(user_query)
-            chatbot_answer = summarize_text(response['output']) if 'output' in response else " "Hi ! I could not fetch the data you asked for, but you can always head over to the tables section & filter to view !"
+            chatbot_answer = summarize_text(response['output']) if 'output' in response else "Hi ! I could not fetch the data you asked for, but you can always head over to the tables section & filter to view !"
             
             return chatbot_answer
         except Exception as e:
