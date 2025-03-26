@@ -2,6 +2,7 @@ from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from langchain.agents import initialize_agent, AgentType
 from langchain_cohere import ChatCohere
+from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain.tools import Tool
 from langchain_experimental.sql import SQLDatabaseChain
 from langchain_community.utilities import SQLDatabase
@@ -28,7 +29,8 @@ SUPABASE_URL = "https://nizvcdssajfpjtncbojx.supabase.co"
 SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5penZjZHNzYWpmcGp0bmNib2p4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDI2MTU0ODksImV4cCI6MjA1ODE5MTQ4OX0.5b2Yzfzzzz-C8S6iqhG3SinKszlgjdd4NUxogWIxCLc"
 COHERE_API_KEY = "8ueWFEgswEV04DUHCsnpIiFqYDeD35e4BPs8sepl"
 SUPABASE_PASSWORD = "SupaBase@Ishanya@Team_2"
-
+GEMINI_API_KEY = "AIzaSyACcbknWrMdZUapY8sQii16PclJ2xlPlqA"
+genai.configure(api_key=API_KEY)
 # Initialize database connection
 #db = SQLDatabase.from_uri(
 #    f"postgresql://postgres:{quote(str(SUPABASE_PASSWORD), safe='')}@db.{SUPABASE_URL.split('//')[-1]}:6543/postgres"
@@ -37,6 +39,10 @@ SUPABASE_PASSWORD = "SupaBase@Ishanya@Team_2"
 db = SQLDatabase.from_uri(
     f"postgresql://postgres.nizvcdssajfpjtncbojx:{quote(str(SUPABASE_PASSWORD), safe='')}@aws-0-ap-south-1.pooler.supabase.com:6543/postgres"
 )
+
+
+
+llm = ChatGoogleGenerativeAI(model="gemini-2.0-pro-exp", google_api_key=GEMINI_API_KEY)
 
 
 db_chain = SQLDatabaseChain.from_llm(
@@ -54,22 +60,19 @@ def query_database(query: str):
     print(f"Query Result: {result}")
     return result
 
+
 tool = Tool(
     name="DatabaseQuery",
     func=query_database,
     description="Use this tool to query the Supabase database with SQL commands"
 )
 
-# Initialize LangChain agent
-llm = ChatCohere(cohere_api_key=COHERE_API_KEY, temperature=0)
 agent = initialize_agent(
     tools=[tool],
     llm=llm,
     agent=AgentType.STRUCTURED_CHAT_ZERO_SHOT_REACT_DESCRIPTION,
     verbose=True,
     handle_parsing_errors=True,
-    max_iterations=5,
-    return_intermediate_steps=False,
 )
 
 class QueryRequest(BaseModel):
@@ -78,8 +81,7 @@ class QueryRequest(BaseModel):
 
 
 
-API_KEY = "AIzaSyACcbknWrMdZUapY8sQii16PclJ2xlPlqA"
-genai.configure(api_key=API_KEY)
+
 def summarize_text(text):
     model = genai.GenerativeModel("gemini-2.0-pro-exp")
     response = model.generate_content(f"Summarize this: {text}. Give structured output like a chatbot, preferabbly in a small paragraph or numbered points. DONT use * or | or special characters for formatting")
