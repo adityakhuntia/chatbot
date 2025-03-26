@@ -78,7 +78,7 @@ def chatbot(request: QueryRequest):
     else:
         try:
             user_query = request.user_query + (
-            f"""You are an SQL Agent interacting with a database. Ensure all your response is easy to read. avoid structuring data into tables or using '*' or '|'. 
+            f"""You are an SQL Agent interacting with a database. Ensure all your response is easy to read. avoid structuring data into tables or using '*' or '|'.  
             
             Ensure all queries respect foreign key constraints, data types, and relationships.
             Ensure all SQL queries adhere to these constraints given below and relationships while fetching, inserting, updating, or deleting records..
@@ -93,11 +93,8 @@ def chatbot(request: QueryRequest):
             Ensure that queries enforce these access rules by filtering data appropriately. If the user requests unauthorized information, respond with an error message instead of generating a query.
     
             Furthermore, if you think the query asks for a huge amount of data which can't be shown over chat, reply by saying the data is large in scale, we recommend you head to the tables page to view it. 
-            
-            Now, given the following access level : {request.user_access_level}, generate a valid SQL query that respects these permissions and display thhe results
-    
-            
-            
+
+        
             ### Database Schema:
             
             #### 1. students
@@ -248,11 +245,19 @@ def chatbot(request: QueryRequest):
             - `program_id` (int, FOREIGN KEY → programs.id)
             
             ### Relationships:
-            - Each student belongs to **one or two programs**.
-            - Each educator is also an **employee**.
+            - Each student belongs to one or two programs.
+            - Each educator is also an employee.
             - Attendance records link students and employees to their respective programs.
-            - Announcements are made by **admins** (who are employees).
+            - Announcements are made by admins (who are employees).
+
+
+            ### **Response Formatting Instructions:**
+            - Provide responses in a **natural, conversational tone** instead of listing rigid database fields.  
+            - Present key details in **short sentences or bullet points** while maintaining clarity.
+            - Instead of listing field names explicitly, weave details into a coherent summary.  
             
+
+            Now, given the access level: **{request.user_access_level}**, generate a valid SQL query that respects these permissions and display the results.
             Please present the response in a structured yet easy-to-read format, avoiding raw tables or overly technical JSON outputs. Use bullet points, short paragraphs, or well-formatted sections to ensure clarity. 
             """
             )
